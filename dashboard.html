@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="cyber-grid"></div>
+        <div class="floating-particles" id="particles"></div>
+        <div class="glow-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <i class="fas fa-shield-halved"></i>
+            <span>{{ settings.site_name }}</span>
+        </div>
+        <div class="nav-links">
+            <a href="#home" class="nav-link active" data-section="home">
+                <i class="fas fa-home"></i> HOME
+            </a>
+            <a href="#games" class="nav-link" data-section="games">
+                <i class="fas fa-gamepad"></i> GAMES
+            </a>
+            <a href="#team" class="nav-link" data-section="team">
+                <i class="fas fa-users"></i> TEAM
+            </a>
+            <a href="#about" class="nav-link" data-section="about">
+                <i class="fas fa-info-circle"></i> ABOUT
+            </a>
+            <a href="{{ settings.discord_link }}" target="_blank" class="nav-link discord" id="discordNavLink">
+                <i class="fab fa-discord"></i> DISCORD
+            </a>
+            {% if user.is_admin %}
+            <a href="#admin" class="nav-link admin-link" data-section="admin">
+                <i class="fas fa-cog"></i> ADMIN
+            </a>
+            {% endif %}
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span class="username">{{ user.username }}</span>
+                {% if user.is_admin %}
+                <span class="admin-badge"><i class="fas fa-crown"></i> ADMIN</span>
+                {% endif %}
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section class="content-section active" id="home">
+            <div class="welcome-banner">
+                <div class="banner-content">
+                    <h1>WELCOME TO <span class="highlight">{{ settings.site_name }}</span></h1>
+                    <p>{{ settings.welcome_message }}</p>
+                    <div class="banner-stats">
+                        <div class="stat">
+                            <i class="fas fa-users"></i>
+                            <span class="stat-value" id="memberCount">1000+</span>
+                            <span class="stat-label">Members</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-gamepad"></i>
+                            <span class="stat-value">3</span>
+                            <span class="stat-label">Games</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-trophy"></i>
+                            <span class="stat-value">∞</span>
+                            <span class="stat-label">Fun</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-decoration">
+                    <div class="hex-pattern"></div>
+                </div>
+            </div>
+
+            <div class="quick-access">
+                <h2><i class="fas fa-bolt"></i> QUICK ACCESS</h2>
+                <div class="quick-cards">
+                    <div class="quick-card" onclick="switchSection('games')">
+                        <div class="card-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>PLAY GAMES</h3>
+                        <p>Snake, Memory & Space Shooter</p>
+                    </div>
+                    <a href="{{ settings.discord_link }}" target="_blank" class="quick-card discord-card">
+                        <div class="card-icon discord">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <h3>JOIN DISCORD</h3>
+                        <p id="discordLinkText">{{ settings.discord_link }}</p>
+                    </a>
+                    <div class="quick-card" onclick="switchSection('team')">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>OUR TEAM</h3>
+                        <p>Meet the DVR Family</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Section -->
+        <section class="content-section" id="games">
+            <div class="section-header">
+                <h1><i class="fas fa-gamepad"></i> GAME ARCADE</h1>
+                <p>Choose your adventure and climb the leaderboards!</p>
+            </div>
+
+            <div class="games-grid">
+                <!-- Snake Game -->
+                <div class="game-card" id="snakeCard">
+                    <div class="game-preview snake-preview">
+                        <div class="snake-demo"></div>
+                    </div>
+                    <div class="game-info">
+                        <h3><i class="fas fa-dragon"></i> SNAKE GAME</h3>
+                        <p>Classic snake game with a modern twist</p>
+                        <button class="play-btn" onclick="openGame('snake')">
+                            <i class="fas fa-play"></i> PLAY NOW
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Memory Game -->
+                <div class="game-card" id="memoryCard">
+                    <div class="game-preview memory-preview">
+                        <div class="memory-demo">
+                            <div class="card-demo"></div>
+                            <div class="card-demo"></div>
+                            <div class="card-demo"></div>
+                            <div class="card-demo"></div>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3><i class="fas fa-brain"></i> MEMORY GAME</h3>
+                        <p>Test your memory with card matching</p>
+                        <button class="play-btn" onclick="openGame('memory')">
+                            <i class="fas fa-play"></i> PLAY NOW
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Space Shooter -->
+                <div class="game-card" id="spaceCard">
+                    <div class="game-preview space-preview">
+                        <div class="space-demo">
+                            <div class="spaceship"></div>
+                            <div class="stars"></div>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3><i class="fas fa-rocket"></i> SPACE SHOOTER</h3>
+                        <p>Defend Earth from alien invaders</p>
+                        <button class="play-btn" onclick="openGame('space')">
+                            <i class="fas fa-play"></i> PLAY NOW
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="content-section" id="team">
+            <div class="section-header">
+                <h1><i class="fas fa-users"></i> OUR TEAM</h1>
+                <p>Meet the amazing people behind DVR Community</p>
+            </div>
+
+            <div class="team-grid" id="teamGrid">
+                {% for member in team_members %}
+                <div class="team-card" data-id="{{ member.id }}">
+                    <div class="team-avatar">
+                        <i class="fas {{ member.icon }}"></i>
+                        <div class="avatar-glow"></div>
+                    </div>
+                    <div class="team-info">
+                        <h3>{{ member.name }}</h3>
+                        <span class="team-role {{ member.role|lower|replace(' ', '-')|replace('&', '') }}">{{ member.role }}</span>
+                    </div>
+                    <div class="team-decoration">
+                        <div class="deco-line"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Made By Footer -->
+            <div class="team-footer">
+                <div class="made-by-section">
+                    <span>MADE WITH</span>
+                    <div class="heart-container">
+                        <i class="fas fa-heart heart-icon-glow"></i>
+                    </div>
+                    <span>BY</span>
+                    <span class="author-name">DRFX</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="content-section" id="about">
+            <div class="about-container">
+                <div class="about-header">
+                    <div class="about-logo">
+                        <i class="fas fa-shield-halved"></i>
+                        <div class="logo-ring"></div>
+                    </div>
+                    <h1>ABOUT <span class="highlight">DVR COMMUNITY</span></h1>
+                </div>
+
+                <div class="about-content">
+                    <div class="about-card">
+                        <div class="card-header">
+                            <i class="fas fa-bullseye"></i>
+                            <h3>OUR MISSION</h3>
+                        </div>
+                        <p>DVR Community is dedicated to bringing gamers together in a fun, inclusive, and competitive environment. We believe in the power of gaming to connect people across the world.</p>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-header">
+                            <i class="fas fa-star"></i>
+                            <h3>WHAT WE OFFER</h3>
+                        </div>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Exclusive gaming tournaments</li>
+                            <li><i class="fas fa-check"></i> Active Discord community</li>
+                            <li><i class="fas fa-check"></i> Mini-games and leaderboards</li>
+                            <li><i class="fas fa-check"></i> Friendly and supportive members</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-header">
+                            <i class="fab fa-discord"></i>
+                            <h3>JOIN OUR DISCORD</h3>
+                        </div>
+                        <p>Connect with fellow gamers, participate in events, and be part of something amazing!</p>
+                        <a href="{{ settings.discord_link }}" target="_blank" class="discord-btn" id="aboutDiscordBtn">
+                            <i class="fab fa-discord"></i> <span id="discordBtnText">{{ settings.discord_link }}</span>
+                        </a>
+                    </div>
+
+                    <div class="about-card full-width">
+                        <div class="card-header">
+                            <i class="fas fa-heart"></i>
+                            <h3>SPECIAL THANKS</h3>
+                        </div>
+                        <p>A huge thank you to all our community members who make DVR special every day. Your support, participation, and enthusiasm drive us to create better experiences.</p>
+                    </div>
+                </div>
+
+                <!-- Made By Footer -->
+                <div class="about-footer">
+                    <div class="made-by-section">
+                        <span>MADE WITH</span>
+                        <div class="heart-container">
+                            <i class="fas fa-heart heart-icon-glow"></i>
+                        </div>
+                        <span>BY</span>
+                        <span class="author-name">DRFX</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {% if user.is_admin %}
+        <!-- Admin Section -->
+        <section class="content-section" id="admin">
+            <div class="section-header">
+                <h1><i class="fas fa-cog"></i> ADMIN PANEL</h1>
+                <p>Manage your community settings</p>
+            </div>
+
+            <div class="admin-grid">
+                <!-- Site Settings -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <i class="fas fa-sliders-h"></i>
+                        <h3>SITE SETTINGS</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="admin-input-group">
+                            <label>Discord Link</label>
+                            <div class="input-with-btn">
+                                <input type="text" id="adminDiscordLink" value="{{ settings.discord_link }}" placeholder="https://discord.gg/...">
+                                <button class="admin-btn" onclick="updateDiscordLink()">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="admin-input-group">
+                            <label>Site Name</label>
+                            <div class="input-with-btn">
+                                <input type="text" id="adminSiteName" value="{{ settings.site_name }}" placeholder="Site Name">
+                                <button class="admin-btn" onclick="updateSiteName()">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="admin-input-group">
+                            <label>Welcome Message</label>
+                            <div class="input-with-btn">
+                                <input type="text" id="adminWelcomeMsg" value="{{ settings.welcome_message }}" placeholder="Welcome message">
+                                <button class="admin-btn" onclick="updateWelcomeMsg()">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="admin-toggle-group">
+                            <label>Maintenance Mode</label>
+                            <button class="toggle-btn {{ 'on' if settings.maintenance_mode == 'true' else 'off' }}" id="maintenanceToggle" onclick="toggleMaintenance()">
+                                {{ 'ON' if settings.maintenance_mode == 'true' else 'OFF' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Management -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <i class="fas fa-users-cog"></i>
+                        <h3>TEAM MANAGEMENT</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="team-list" id="adminTeamList">
+                            {% for member in team_members %}
+                            <div class="team-list-item" data-id="{{ member.id }}">
+                                <div class="team-list-info">
+                                    <i class="fas {{ member.icon }}"></i>
+                                    <span class="name">{{ member.name }}</span>
+                                    <span class="role">{{ member.role }}</span>
+                                </div>
+                                <div class="team-list-actions">
+                                    <button class="action-btn edit" onclick="editTeamMember({{ member.id }}, '{{ member.name }}', '{{ member.role }}', '{{ member.icon }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete" onclick="deleteTeamMember({{ member.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button class="admin-btn full" onclick="openAddMemberModal()">
+                            <i class="fas fa-plus"></i> ADD MEMBER
+                        </button>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <i class="fas fa-user-shield"></i>
+                        <h3>USER MANAGEMENT</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="user-list" id="adminUserList">
+                            <!-- Users loaded via JS -->
+                        </div>
+                        <button class="admin-btn full" onclick="loadUsers()">
+                            <i class="fas fa-sync"></i> REFRESH USERS
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>STATISTICS</h3>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <i class="fas fa-users"></i>
+                                <span class="stat-number" id="statUsers">-</span>
+                                <span class="stat-label">Total Users</span>
+                            </div>
+                            <div class="stat-box">
+                                <i class="fas fa-gamepad"></i>
+                                <span class="stat-number" id="statGames">-</span>
+                                <span class="stat-label">Games Played</span>
+                            </div>
+                        </div>
+                        <button class="admin-btn full" onclick="loadStats()">
+                            <i class="fas fa-sync"></i> REFRESH STATS
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <!-- Add/Edit Team Member Modal -->
+    <div class="modal" id="teamMemberModal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2 id="teamModalTitle">ADD TEAM MEMBER</h2>
+                <button class="close-modal" onclick="closeTeamModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editMemberId">
+                <div class="modal-input-group">
+                    <label>Name</label>
+                    <input type="text" id="memberName" placeholder="Enter name">
+                </div>
+                <div class="modal-input-group">
+                    <label>Role</label>
+                    <input type="text" id="memberRole" placeholder="e.g., OWNER, DEVELOPER">
+                </div>
+                <div class="modal-input-group">
+                    <label>Icon (FontAwesome class)</label>
+                    <select id="memberIcon">
+                        <option value="fa-crown">👑 Crown (Owner)</option>
+                        <option value="fa-code">💻 Code (Developer)</option>
+                        <option value="fa-terminal">⌨️ Terminal (Developer)</option>
+                        <option value="fa-star">⭐ Star (Founder)</option>
+                        <option value="fa-user-tie">👔 User Tie (Manager)</option>
+                        <option value="fa-shield-halved">🛡️ Shield (Moderator)</option>
+                        <option value="fa-hammer">🔨 Hammer (Builder)</option>
+                        <option value="fa-palette">🎨 Palette (Designer)</option>
+                        <option value="fa-headset">🎧 Headset (Support)</option>
+                        <option value="fa-user">👤 User (Member)</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn cancel" onclick="closeTeamModal()">CANCEL</button>
+                    <button class="modal-btn confirm" onclick="saveTeamMember()">SAVE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Modal -->
+    <div class="game-modal" id="gameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="gameTitle">GAME</h2>
+                <button class="close-modal" onclick="closeGame()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <canvas id="gameCanvas"></canvas>
+                <div class="game-controls" id="gameControls">
+                    <div class="score-display">
+                        <span>SCORE: </span>
+                        <span id="currentScore">0</span>
+                    </div>
+                    <div class="game-buttons">
+                        <button class="control-btn" id="startBtn" onclick="startGame()">
+                            <i class="fas fa-play"></i> START
+                        </button>
+                        <button class="control-btn" id="pauseBtn" onclick="pauseGame()" style="display:none;">
+                            <i class="fas fa-pause"></i> PAUSE
+                        </button>
+                        <button class="control-btn" id="restartBtn" onclick="restartGame()" style="display:none;">
+                            <i class="fas fa-redo"></i> RESTART
+                        </button>
+                    </div>
+                </div>
+                <!-- Memory Game Grid -->
+                <div class="memory-grid" id="memoryGrid" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-info-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
+    <!-- Store settings for JS -->
+    <script>
+        window.siteSettings = {
+            discord_link: "{{ settings.discord_link }}",
+            site_name: "{{ settings.site_name }}",
+            welcome_message: "{{ settings.welcome_message }}",
+            is_admin: {{ 'true' if user.is_admin else 'false' }}
+        };
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/games.js') }}"></script>
+</body>
+</html>
